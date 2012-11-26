@@ -2,12 +2,15 @@ package com.example.waypoint;
 
 import java.util.ArrayList;
 
+
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Point;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+
 import android.util.Log;
+
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -19,7 +22,7 @@ import com.google.android.maps.MapView;
 import com.google.android.maps.OverlayItem;
 
 public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
-	Context mContext;
+	private Context mContext;
 	
 	private OverlayItem dragItem = null;
 	private ImageView dragImage=null;
@@ -34,6 +37,14 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 	public WaypointItemizedOverlay(Drawable defaultMarker) {
 		super(boundCenterBottom(defaultMarker));
 		
+		this.marker = defaultMarker;
+		
+		mOverlays.add(new OverlayItem(getPoint(40.748963847316034,
+		                                          -73.96807193756104),
+		                                "UN", "United Nations"));
+		      
+		populate();    
+		
 	}
 	
 	private GeoPoint getPoint(double lat, double lon) {
@@ -43,7 +54,10 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 	public WaypointItemizedOverlay(Drawable defaultMarker, Context context) {
 		  super(boundCenterBottom(defaultMarker));
 		  mContext = context;
+		  
 		  dragImage= new ImageView(context);
+		  dragImage.setImageDrawable(defaultMarker);
+		  Log.i("ETHAN", "MADE THE IMAGE VIEW");
 		  
 		  xDragImageOffset=dragImage.getDrawable().getIntrinsicWidth()/2;
 		  yDragImageOffset=dragImage.getDrawable().getIntrinsicHeight();
