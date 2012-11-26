@@ -4,7 +4,10 @@ import java.util.List;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
+import android.view.MotionEvent;
+import android.widget.Toast;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
@@ -40,6 +43,10 @@ public class MainActivity extends MapActivity {
      
         itemizedoverlay.addOverlay(overlayitem);
         mapOverlays.add(itemizedoverlay);
+        
+        //Touchy touchy?
+        mapOverlay myOverlay = new mapOverlay();
+        mapOverlays.add(myOverlay);
     }
     
     private GeoPoint getPoint(double lat, double lon) {
@@ -56,5 +63,19 @@ public class MainActivity extends MapActivity {
     @Override
     protected boolean isRouteDisplayed() {
         return false;
+    }
+    
+    class mapOverlay extends com.google.android.maps.Overlay{
+        @Override
+
+        public boolean onTouchEvent(MotionEvent event, MapView mapview){
+        	Log.i("Touching the map!", "TOUCHY TOUCH");
+            if (event.getAction()==1){
+                GeoPoint p=mapview.getProjection().fromPixels((int)event.getX(), (int)event.getY());
+                Toast.makeText(getBaseContext(),p.getLatitudeE6()/1E6 + "," + p.getLongitudeE6()/1E6, Toast.LENGTH_SHORT).show();
+
+            }
+            return false;
+        }
     }
 }

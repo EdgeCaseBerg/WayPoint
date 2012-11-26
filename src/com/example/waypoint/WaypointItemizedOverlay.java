@@ -58,14 +58,12 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 		 
 		  //Make the imageview from scratch because the R file refuses to work.
 		  dragImage= new ImageView(context);  
-		  dragImage.setImageDrawable(defaultMarker);
-		  //dragImage.setLayoutParams(new LayoutParams(context,Xml.asAttributeSet(context.getResources().getXml(R.layout.drag))));
 		  RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
 				    RelativeLayout.LayoutParams.WRAP_CONTENT,
 				    RelativeLayout.LayoutParams.WRAP_CONTENT);
-		  
 		  dragImage.setLayoutParams(lp);
-		  
+		  dragImage.setImageDrawable(defaultMarker);
+		  dragImage.setImageResource(R.drawable.androidmarker);
 		  
 		  Log.i("ETHAN", "MADE THE IMAGE VIEW");
 		  
@@ -81,15 +79,6 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 		  populate();    
 	}
 
-	@Override
-	protected boolean onTap(int index) {
-	  OverlayItem item = mOverlays.get(index);
-	  AlertDialog.Builder dialog = new AlertDialog.Builder(mContext);
-	  dialog.setTitle(item.getTitle());
-	  dialog.setMessage(item.getSnippet());
-	  dialog.show();
-	  return true;
-	}
 
 	@Override
 	protected OverlayItem createItem(int i) {
