@@ -33,17 +33,7 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 	
 	public WaypointItemizedOverlay(Drawable defaultMarker) {
 		super(boundCenterBottom(defaultMarker));
-		this.marker = defaultMarker;
 		
-		dragImage=(ImageView)findViewById(R.id.drag);
-	    xDragImageOffset=dragImage.getDrawable().getIntrinsicWidth()/2;
-	    yDragImageOffset=dragImage.getDrawable().getIntrinsicHeight();
-	      
-	    mOverlays.add(new OverlayItem(getPoint(40.748963847316034,
-	                                          -73.96807193756104),
-	                                "UN", "United Nations"));
-	      
-	    populate();
 	}
 	
 	private GeoPoint getPoint(double lat, double lon) {
@@ -53,6 +43,18 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 	public WaypointItemizedOverlay(Drawable defaultMarker, Context context) {
 		  super(boundCenterBottom(defaultMarker));
 		  mContext = context;
+		  dragImage= new ImageView(context);
+		  
+		  xDragImageOffset=dragImage.getDrawable().getIntrinsicWidth()/2;
+		  yDragImageOffset=dragImage.getDrawable().getIntrinsicHeight();
+		  this.marker = defaultMarker;
+			
+	      
+		  mOverlays.add(new OverlayItem(getPoint(40.748963847316034,
+		                                          -73.96807193756104),
+		                                "UN", "United Nations"));
+		      
+		  populate();    
 	}
 
 	@Override
