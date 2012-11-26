@@ -60,11 +60,12 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 		  dragImage= new ImageView(context);  
 		  dragImage.setImageDrawable(defaultMarker);
 		  //dragImage.setLayoutParams(new LayoutParams(context,Xml.asAttributeSet(context.getResources().getXml(R.layout.drag))));
-		  XmlPullParser parser = context.getResources().getXml(R.layout.drag);
-		  AttributeSet attr = Xml.asAttributeSet(parser);
-		  LayoutParams lp = new LayoutParams(context,attr);
-
+		  RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+				    RelativeLayout.LayoutParams.WRAP_CONTENT,
+				    RelativeLayout.LayoutParams.WRAP_CONTENT);
+		  
 		  dragImage.setLayoutParams(lp);
+		  
 		  
 		  Log.i("ETHAN", "MADE THE IMAGE VIEW");
 		  
