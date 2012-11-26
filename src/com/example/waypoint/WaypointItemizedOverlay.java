@@ -2,17 +2,18 @@ package com.example.waypoint;
 
 import java.util.ArrayList;
 
-
+import org.xmlpull.v1.XmlPullParser;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
-
+import android.util.AttributeSet;
 import android.util.Log;
-
+import android.util.Xml;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
@@ -54,9 +55,17 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 	public WaypointItemizedOverlay(Drawable defaultMarker, Context context) {
 		  super(boundCenterBottom(defaultMarker));
 		  mContext = context;
-		  
-		  dragImage= new ImageView(context);
+		 
+		  //Make the imageview from scratch because the R file refuses to work.
+		  dragImage= new ImageView(context);  
 		  dragImage.setImageDrawable(defaultMarker);
+		  //dragImage.setLayoutParams(new LayoutParams(context,Xml.asAttributeSet(context.getResources().getXml(R.layout.drag))));
+		  XmlPullParser parser = context.getResources().getXml(R.layout.drag);
+		  AttributeSet attr = Xml.asAttributeSet(parser);
+		  LayoutParams lp = new LayoutParams(context,attr);
+
+		  dragImage.setLayoutParams(lp);
+		  
 		  Log.i("ETHAN", "MADE THE IMAGE VIEW");
 		  
 		  xDragImageOffset=dragImage.getDrawable().getIntrinsicWidth()/2;
@@ -159,8 +168,7 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
         RelativeLayout.LayoutParams lp=
           (RelativeLayout.LayoutParams)dragImage.getLayoutParams();
               
-        lp.setMargins(x-xDragImageOffset-xDragTouchOffset,
-                        y-yDragImageOffset-yDragTouchOffset, 0, 0);
+        lp.setMargins(x-xDragImageOffset-xDragTouchOffset,y-yDragImageOffset-yDragTouchOffset, 0, 0);
         dragImage.setLayoutParams(lp);
       }
 	
