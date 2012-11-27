@@ -102,7 +102,7 @@ private class MyLocationListener implements LocationListener
             GeoPoint gp = getPoint(loc.getLatitude(),loc.getLongitude());
             
           //Find out if we're close enough to a marker
-            for(OverlayItem item : iOverlay.getOverlays()){
+            for(Waypoint item : iOverlay.getOverlays()){
             	if(comparePoints(gp,item.getPoint())){
             		//We're close enough! 
             		Log.i("CLOSE", "Close to a point!");

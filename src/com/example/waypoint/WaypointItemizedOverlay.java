@@ -20,12 +20,12 @@ import com.google.android.maps.ItemizedOverlay;
 import com.google.android.maps.MapView;
 import com.google.android.maps.OverlayItem;
 
-public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
+public class WaypointItemizedOverlay extends ItemizedOverlay<Waypoint> {
 	private Context mContext;
 	
 	//Dragging markers and removing items	
-	private OverlayItem dragItem = null;
-	private OverlayItem removeItem = null;
+	private Waypoint dragItem = null;
+	private Waypoint removeItem = null;
 	private ImageView dragImage=null;
     private int xDragImageOffset=0;
     private int yDragImageOffset=0;
@@ -38,7 +38,7 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
     private final long TAP_TIME = 200;
     
     
-	private ArrayList<OverlayItem> mOverlays = new ArrayList<OverlayItem>();
+	private ArrayList<Waypoint> mOverlays = new ArrayList<Waypoint>();
 	
 	public WaypointItemizedOverlay(Drawable defaultMarker) {
 		super(boundCenterBottom(defaultMarker));
@@ -51,7 +51,7 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 		
 	}
 	
-	public ArrayList<OverlayItem> getOverlays(){
+	public ArrayList<Waypoint> getOverlays(){
 		return mOverlays;
 	}
 	
@@ -85,7 +85,7 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 
 
 	@Override
-	protected OverlayItem createItem(int i) {
+	protected Waypoint createItem(int i) {
 	  return mOverlays.get(i);
 	}
 	
@@ -109,7 +109,7 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
         	startEvent = event.getEventTime ();
             Log.i("EVENT TIME START",""+startEvent);
             
-            for (OverlayItem item : mOverlays) {
+            for (Waypoint item : mOverlays) {
               Point p=new Point(0,0);
               
               //This places a point into p that is actually useful
@@ -147,7 +147,7 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
             
             GeoPoint pt=map.getProjection().fromPixels(x-xDragTouchOffset,
                                                        y-yDragTouchOffset);
-            OverlayItem toDrop=new OverlayItem(pt, dragItem.getTitle(),
+            Waypoint toDrop=new Waypoint(pt, dragItem.getTitle(),
                                                dragItem.getSnippet());
             Log.i("DROP","Dropping waypoint down");
             //Interesting little hack to make the removes work.
@@ -182,7 +182,7 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
         dragImage.setLayoutParams(lp);
       }
 	
-	public void addOverlay(OverlayItem overlay) {
+	public void addOverlay(Waypoint overlay) {
 	    mOverlays.add(overlay);
 	    populate();
 	}
@@ -195,7 +195,7 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
                 	   Log.i("CREATE", "Creating new Waypoint");
                 	   GeoPoint p=map.getProjection().fromPixels(x, y);
                 	   Log.i("GEO", "LA "+p.getLatitudeE6()+" LO "+p.getLongitudeE6());
-                	   mOverlays.add(new OverlayItem(p,"","" ));
+                	   mOverlays.add(new Waypoint(p,"","" ));
                 	   populate();
                    }
                })
