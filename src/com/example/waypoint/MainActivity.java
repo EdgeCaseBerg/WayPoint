@@ -8,6 +8,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.widget.Toast;
@@ -16,6 +17,7 @@ import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
+import com.google.android.maps.OverlayItem;
 
 public class MainActivity extends MapActivity {
 	private List<Overlay> mapOverlays;
@@ -24,6 +26,7 @@ public class MainActivity extends MapActivity {
 	//GPS STUFF
     private LocationManager lm;
     private LocationListener locationListener;
+    private long CLOSENESS = 300;
 	
 
     @Override
@@ -34,7 +37,7 @@ public class MainActivity extends MapActivity {
         //Set up the map
         map = (MapView) findViewById(R.id.mapview);
         map.getController().setCenter(getPoint(44.479104,-73.197972));
-        map.getController().setZoom(17);
+        map.getController().setZoom(19);
         map.setBuiltInZoomControls(true);
         
         //Set up the marker
@@ -98,7 +101,14 @@ private class MyLocationListener implements LocationListener
             //Make the point
             GeoPoint gp = getPoint(loc.getLatitude(),loc.getLongitude());
             
-            //Find out if we're close enough to a marker 
+          //Find out if we're close enough to a marker
+            for(OverlayItem item : iOverlay.getOverlays()){
+            	if(comparePoints(gp,item.getPoint())){
+            		//We're close enough! 
+            		Log.i("CLOSE", "Close to a point!");
+            	}
+            }
+             
         }
     }
 
@@ -108,9 +118,9 @@ private class MyLocationListener implements LocationListener
     	//44.479104 -73.197972 is on the other
     	//44.479027 -73.197714 is next to that points
     	//So the euclidian distnace between them is approx 270, so I'll round to 300 being close!
-    	double dist = Math.sqrt(Math.pow(fst.getLatitudeE6() -snd.getLatitudeE6(),2) + Math.pow(fst.getLongitudeE6() - snd.getLongitudeE6(),2));
-    	
-    	return dist < 300 ? true : false;
+    	double dist = Math.sqrt(Math.pow(fst.getLatitudeE6()/1000000.0 -snd.getLatitudeE6()/1000000.0,2) + Math.pow(fst.getLongitudeE6()/1000000.0 - snd.getLongitudeE6()/1000000.0,2));
+    	Log.i("DISTANCE",""+dist);
+    	return dist < CLOSENESS ? true : false;
     }
     
     public void onProviderDisabled(String provider) {
