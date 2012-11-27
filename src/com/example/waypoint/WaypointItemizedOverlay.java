@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.ItemizedOverlay;
@@ -65,8 +66,7 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 		  dragImage.setImageDrawable(defaultMarker);
 		  dragImage.setImageResource(R.drawable.androidmarker);
 		  
-		  Log.i("ETHAN", "MADE THE IMAGE VIEW");
-		  
+		 	  
 		  xDragImageOffset=dragImage.getDrawable().getIntrinsicWidth()/2;
 		  yDragImageOffset=dragImage.getDrawable().getIntrinsicHeight();
 		  this.marker = defaultMarker;
@@ -100,8 +100,9 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
         boolean result=false;
         
         
+        
         if (action==MotionEvent.ACTION_DOWN) {
-        	boolean createNewItem = false;
+        	
             for (OverlayItem item : mOverlays) {
               Point p=new Point(0,0);
               
@@ -123,14 +124,11 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 
                   xDragTouchOffset=x-p.x;
                   yDragTouchOffset=y-p.y;
-                  createNewItem = true;
+                  
                   break;
                 }
             }
-            if(createNewItem){
-            	//Put in code for us making a new item where we clicked!
-            	Log.i("Create New Item True", "We want to create an item");
-            }
+           
         }
         else if(action==MotionEvent.ACTION_MOVE && dragItem!=null){
         	setDragImagePosition(x,y);
@@ -149,6 +147,11 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
             
             dragItem=null;
             result=true;
+        }else if(action==MotionEvent.ACTION_UP && dragItem==null){
+        	Log.i("TOUCH", "IN ITEMIZED");
+        	GeoPoint p=map.getProjection().fromPixels((int)event.getX(), (int)event.getY());
+            Toast.makeText(mContext,p.getLatitudeE6()/1E6 + "," + p.getLongitudeE6()/1E6, Toast.LENGTH_SHORT).show();
+
         }
         return (result || super.onTouchEvent(event,map));
     }
