@@ -32,6 +32,10 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
     private int xDragTouchOffset=0;
     private int yDragTouchOffset=0;
     private Drawable marker=null;
+    
+    private long startEvent = 0;
+    private long endEvent = 1;
+    private final long TAP_TIME = 200;
 	
 	private ArrayList<OverlayItem> mOverlays = new ArrayList<OverlayItem>();
 	
@@ -99,7 +103,9 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
         
         
         if (action==MotionEvent.ACTION_DOWN ) {
-        	
+        	startEvent = event.getEventTime ();
+            Log.i("EVENT TIME START",""+startEvent);
+            
             for (OverlayItem item : mOverlays) {
               Point p=new Point(0,0);
               
@@ -123,8 +129,6 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
                   xDragTouchOffset=x-p.x;
                   yDragTouchOffset=y-p.y;
                   
-                  showDeleteDialog();
-                  
                   break;
                 }
             }
@@ -147,11 +151,21 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
             removeItem = toDrop;
             mOverlays.add(toDrop);
             populate();
-            
             dragItem=null;
             result=true;
+            endEvent = event.getEventTime();
+            Log.i("END TIME DELETE", ""+endEvent);
+            if(endEvent - startEvent < TAP_TIME){
+            	showDeleteDialog();
+            }
+            
+            
         }else if(action==MotionEvent.ACTION_UP && dragItem==null){
-        	showCreateDialog(x,y,map);
+        	endEvent = event.getEventTime();
+        	Log.i("END TIME CREATE", ""+endEvent);
+            if(endEvent - startEvent < TAP_TIME){
+            	showCreateDialog(x,y,map);
+            }
         }
         return (result || super.onTouchEvent(event,map));
     }
