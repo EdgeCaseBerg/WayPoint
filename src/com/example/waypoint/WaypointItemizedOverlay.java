@@ -2,24 +2,22 @@ package com.example.waypoint;
 
 import java.util.ArrayList;
 
-import org.xmlpull.v1.XmlPullParser;
-
 import android.app.AlertDialog;
+import android.app.DialogFragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
-import android.util.AttributeSet;
 import android.util.Log;
-import android.util.Xml;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.ItemizedOverlay;
+import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapView;
 import com.google.android.maps.OverlayItem;
 
@@ -151,6 +149,7 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
         	Log.i("TOUCH", "IN ITEMIZED");
         	GeoPoint p=map.getProjection().fromPixels((int)event.getX(), (int)event.getY());
             Toast.makeText(mContext,p.getLatitudeE6()/1E6 + "," + p.getLongitudeE6()/1E6, Toast.LENGTH_SHORT).show();
+            showCreateDialog(x,y,map);
 
         }
         return (result || super.onTouchEvent(event,map));
@@ -168,6 +167,27 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 	public void addOverlay(OverlayItem overlay) {
 	    mOverlays.add(overlay);
 	    populate();
+	}
+	
+	private void showCreateDialog(final int x, final int y,final MapView map){
+		AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setMessage("Create a Waypoint?")
+               .setPositiveButton("Create", new DialogInterface.OnClickListener() {
+                   public void onClick(DialogInterface dialog, int id) {
+                	   GeoPoint p=map.getProjection().fromPixels(x, y);
+                	   mOverlays.add(new OverlayItem(p,"","" ));
+                	   populate();
+                   }
+               })
+               .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                   public void onClick(DialogInterface dialog, int id) {
+                       // User cancelled the dialog do nothing
+                   }
+               });
+        // Create the AlertDialog object and return it
+        AlertDialog dia = builder.create();
+        dia.show();
+        
 	}
 
 }
