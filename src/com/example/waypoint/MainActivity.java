@@ -4,10 +4,8 @@ import java.util.List;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
-import android.view.MotionEvent;
-import android.widget.Toast;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
@@ -62,5 +60,15 @@ public class MainActivity extends MapActivity {
         return false;
     }
     
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+      if (keyCode == KeyEvent.KEYCODE_Z) {
+        map.displayZoomControls(true);
+        return(true);
+      }
+      
+      return(super.onKeyDown(keyCode, event));
+    }
+
     
 }

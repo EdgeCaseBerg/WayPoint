@@ -39,13 +39,13 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 		
 		this.marker = defaultMarker;
 		
-		mOverlays.add(new OverlayItem(getPoint(40.748963847316034,
-		                                          -73.96807193756104),
-		                                "UN", "United Nations"));
+		mOverlays.add(new OverlayItem(getPoint(44.4758,73.2125),"VT", "Burlington"));
 		      
 		populate();    
 		
 	}
+	
+	
 	
 	private GeoPoint getPoint(double lat, double lon) {
         return(new GeoPoint((int)(lat*1000000.0),(int)(lon*1000000.0)));
@@ -123,13 +123,19 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
                   xDragTouchOffset=x-p.x;
                   yDragTouchOffset=y-p.y;
                   
+                  showDeleteDialog();
+                  
                   break;
                 }
             }
            
         }
         else if(action==MotionEvent.ACTION_MOVE && dragItem!=null){
-        	setDragImagePosition(x,y);
+        	//Are we dragging a marker or dragging the map?
+            Point p=new Point(0,0);
+            map.getProjection().toPixels(dragItem.getPoint(), p);
+        	if (hitTest(dragItem, marker, x-p.x, y-p.y))
+        		setDragImagePosition(x,y);
         	result = true;
         }
         else if(action==MotionEvent.ACTION_UP && dragItem!=null){
@@ -146,11 +152,7 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
             dragItem=null;
             result=true;
         }else if(action==MotionEvent.ACTION_UP && dragItem==null){
-        	Log.i("TOUCH", "IN ITEMIZED");
-        	GeoPoint p=map.getProjection().fromPixels((int)event.getX(), (int)event.getY());
-            Toast.makeText(mContext,p.getLatitudeE6()/1E6 + "," + p.getLongitudeE6()/1E6, Toast.LENGTH_SHORT).show();
-            showCreateDialog(x,y,map);
-
+        	showCreateDialog(x,y,map);
         }
         return (result || super.onTouchEvent(event,map));
     }
@@ -187,7 +189,24 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
         // Create the AlertDialog object and return it
         AlertDialog dia = builder.create();
         dia.show();
-        
+	}
+	
+	private void showDeleteDialog(){
+		AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setMessage("Delete Waypoint?")
+               .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                   public void onClick(DialogInterface dialog, int id) {
+                	   dragItem= null;
+                   }
+               })
+               .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                   public void onClick(DialogInterface dialog, int id) {
+                       // User cancelled the dialog do nothing
+                   }
+               });
+        // Create the AlertDialog object and return it
+        AlertDialog dia = builder.create();
+        dia.show();
 	}
 
 }
