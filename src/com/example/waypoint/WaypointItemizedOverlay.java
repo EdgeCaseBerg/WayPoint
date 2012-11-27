@@ -3,27 +3,27 @@ package com.example.waypoint;
 import java.util.ArrayList;
 
 import android.app.AlertDialog;
-import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.ItemizedOverlay;
-import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapView;
 import com.google.android.maps.OverlayItem;
 
 public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 	private Context mContext;
 	
+	//Dragging markers and removing items	
 	private OverlayItem dragItem = null;
 	private OverlayItem removeItem = null;
 	private ImageView dragImage=null;
@@ -36,7 +36,8 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
     private long startEvent = 0;
     private long endEvent = 1;
     private final long TAP_TIME = 200;
-	
+    
+    
 	private ArrayList<OverlayItem> mOverlays = new ArrayList<OverlayItem>();
 	
 	public WaypointItemizedOverlay(Drawable defaultMarker) {
@@ -46,11 +47,13 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 		
 		//mOverlays.add(new OverlayItem(getPoint(44.4758,73.2125),"VT", "Burlington"));
 		      
-		populate();    
+		populate();
 		
 	}
 	
-	
+	public ArrayList<OverlayItem> getOverlays(){
+		return mOverlays;
+	}
 	
 	private GeoPoint getPoint(double lat, double lon) {
         return(new GeoPoint((int)(lat*1000000.0),(int)(lon*1000000.0)));
@@ -191,6 +194,7 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
                    public void onClick(DialogInterface dialog, int id) {
                 	   Log.i("CREATE", "Creating new Waypoint");
                 	   GeoPoint p=map.getProjection().fromPixels(x, y);
+                	   Log.i("GEO", "LA "+p.getLatitudeE6()+" LO "+p.getLongitudeE6());
                 	   mOverlays.add(new OverlayItem(p,"","" ));
                 	   populate();
                    }
