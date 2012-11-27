@@ -36,10 +36,6 @@ public class MainActivity extends MapActivity {
         
         WaypointItemizedOverlay itemizedoverlay = new WaypointItemizedOverlay(drawable, this);
         
-        GeoPoint point = new GeoPoint(19240000,-99120000);
-        OverlayItem overlayitem = new OverlayItem(point, "Hola, Mundo!", "I'm in Mexico City!");
-     
-        itemizedoverlay.addOverlay(overlayitem);
         mapOverlays.add(itemizedoverlay);
         
     }

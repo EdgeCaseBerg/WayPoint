@@ -25,6 +25,7 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 	private Context mContext;
 	
 	private OverlayItem dragItem = null;
+	private OverlayItem removeItem = null;
 	private ImageView dragImage=null;
     private int xDragImageOffset=0;
     private int yDragImageOffset=0;
@@ -39,7 +40,7 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 		
 		this.marker = defaultMarker;
 		
-		mOverlays.add(new OverlayItem(getPoint(44.4758,73.2125),"VT", "Burlington"));
+		//mOverlays.add(new OverlayItem(getPoint(44.4758,73.2125),"VT", "Burlington"));
 		      
 		populate();    
 		
@@ -70,9 +71,7 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 		  this.marker = defaultMarker;
 			
 	      
-		  mOverlays.add(new OverlayItem(getPoint(40.748963847316034,
-		                                          -73.96807193756104),
-		                                "UN", "United Nations"));
+		  //mOverlays.add(new OverlayItem(getPoint(40.748963847316034,-73.96807193756104),"UN", "United Nations"));
 		      
 		  populate();    
 	}
@@ -99,7 +98,7 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
         
         
         
-        if (action==MotionEvent.ACTION_DOWN) {
+        if (action==MotionEvent.ACTION_DOWN ) {
         	
             for (OverlayItem item : mOverlays) {
               Point p=new Point(0,0);
@@ -111,6 +110,7 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
               if (hitTest(item, marker, x-p.x, y-p.y)) {
                   result=true;
                   dragItem =item;
+                  removeItem = item;
                   mOverlays.remove(dragItem);
                   populate();
 
@@ -132,10 +132,7 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
         }
         else if(action==MotionEvent.ACTION_MOVE && dragItem!=null){
         	//Are we dragging a marker or dragging the map?
-            Point p=new Point(0,0);
-            map.getProjection().toPixels(dragItem.getPoint(), p);
-        	if (hitTest(dragItem, marker, x-p.x, y-p.y))
-        		setDragImagePosition(x,y);
+            setDragImagePosition(x,y);
         	result = true;
         }
         else if(action==MotionEvent.ACTION_UP && dragItem!=null){
@@ -145,7 +142,9 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
                                                        y-yDragTouchOffset);
             OverlayItem toDrop=new OverlayItem(pt, dragItem.getTitle(),
                                                dragItem.getSnippet());
-            
+            Log.i("DROP","Dropping waypoint down");
+            //Interesting little hack to make the removes work.
+            removeItem = toDrop;
             mOverlays.add(toDrop);
             populate();
             
@@ -176,6 +175,7 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
         builder.setMessage("Create a Waypoint?")
                .setPositiveButton("Create", new DialogInterface.OnClickListener() {
                    public void onClick(DialogInterface dialog, int id) {
+                	   Log.i("CREATE", "Creating new Waypoint");
                 	   GeoPoint p=map.getProjection().fromPixels(x, y);
                 	   mOverlays.add(new OverlayItem(p,"","" ));
                 	   populate();
@@ -196,12 +196,20 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<OverlayItem> {
         builder.setMessage("Delete Waypoint?")
                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                    public void onClick(DialogInterface dialog, int id) {
-                	   dragItem= null;
+                	   if(removeItem!=null){
+                		   Log.i("DELETE", "Trying to remove remoteItem");
+                		   Log.i("DELETEINT",""+mOverlays.indexOf(removeItem));
+                		   Log.i("DELETEBOOL",""+mOverlays.remove(removeItem));
+                	   
+                		   populate();
+                		   removeItem= null;
+                	   }
                    }
                })
                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                    public void onClick(DialogInterface dialog, int id) {
                        // User cancelled the dialog do nothing
+                	   removeItem= null;
                    }
                });
         // Create the AlertDialog object and return it
