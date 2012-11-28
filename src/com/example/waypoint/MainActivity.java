@@ -115,6 +115,7 @@ private class MyLocationListener implements LocationListener
             //Basically the end of the program I guess
             if(allNodesVisited()){
             	//Display the information. Maybe I should make another screen for this.
+            	
             }
             
             
