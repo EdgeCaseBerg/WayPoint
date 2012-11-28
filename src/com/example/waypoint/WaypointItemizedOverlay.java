@@ -24,6 +24,9 @@ import com.google.android.maps.OverlayItem;
 public class WaypointItemizedOverlay extends ItemizedOverlay<Waypoint> {
 	private Context mContext;
 	
+	//Start time for our run:
+	public static long runStartTime = -1;
+	
 	//Dragging markers and removing items	
 	private Waypoint dragItem = null;
 	private Waypoint removeItem = null;
@@ -34,9 +37,25 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<Waypoint> {
     private int yDragTouchOffset=0;
     private Drawable marker=null;
     
+    //Stuff for Tapping
     private long startEvent = 0;
     private long endEvent = 1;
     private final long TAP_TIME = 250;
+    
+    //Stuff for long pressing:
+    private int longClickMin = 1000;
+    private long startTimeLongClick = 0;
+    //Coordinates for long click
+    private float xLongClick;
+    private float yLongClick;
+    //Tolerance variables (pixel box);
+    private float tolerance = 10;
+    //Box variables for seeing if we fell off
+    private float xLow;
+    private float xHigh;
+    private float yLow;
+    private float yHigh;
+    
     
     
 	public static ArrayList<Waypoint> mOverlays = new ArrayList<Waypoint>();
@@ -113,6 +132,9 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<Waypoint> {
         
         if (action==MotionEvent.ACTION_DOWN ) {
         	startEvent = event.getEventTime ();
+        	startTimeLongClick = event.getEventTime();
+        	xLongClick = x;
+        	yLongClick = y;
             Log.i("EVENT TIME START",""+startEvent);
             
             for (Waypoint item : mOverlays) {
@@ -147,6 +169,19 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<Waypoint> {
         	//Are we dragging a marker or dragging the map?
             setDragImagePosition(x,y);
         	result = true;
+        	if(event.getPointerCount()>1){
+        		//This will not match downtime, no long click
+        		startTimeLongClick = 0;
+        	}else{
+        		xLow = xLongClick - tolerance;
+        		xHigh= xLongClick + tolerance;
+        		yLow = yLongClick - tolerance;
+        		yHigh= yLongClick + tolerance;
+        		if( (x < xLow || x > xHigh) ||  (y < yLow || y > yHigh)  ){
+        			//We've moved too much
+        			startTimeLongClick = 0;
+        		}
+        	}
         }
         else if(action==MotionEvent.ACTION_UP && dragItem!=null){
         	dragImage.setVisibility(View.GONE);
@@ -172,7 +207,24 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<Waypoint> {
             
         }else if(action==MotionEvent.ACTION_UP && dragItem==null){
         	endEvent = event.getEventTime();
-        	Log.i("END TIME CREATE", ""+endEvent);
+        	long downTime = event.getDownTime();
+        	if(startTimeLongClick == downTime){
+        		if((endEvent - startTimeLongClick) > longClickMin){
+        			xLow = xLongClick - tolerance;
+            		xHigh= xLongClick + tolerance;
+            		yLow = yLongClick - tolerance;
+            		yHigh= yLongClick + tolerance;
+            		if (!( (x < xLow || x > xHigh) ||  (y < yLow || y > yHigh)  )){
+            			//Reset waypoints
+            			for(Waypoint item : mOverlays){
+            				item.markVisited(false);
+            			}
+            			//Set the start time, a long press means we are starting out run!
+            			runStartTime = System.currentTimeMillis();
+            			Toast.makeText(mContext, "Starting Run", Toast.LENGTH_LONG).show();
+            		}
+        		}
+        	}
             if(endEvent - startEvent < TAP_TIME){
             	showCreateDialog(x,y,map);
             }

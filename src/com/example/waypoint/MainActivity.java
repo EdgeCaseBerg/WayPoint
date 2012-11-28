@@ -122,9 +122,9 @@ private class MyLocationListener implements LocationListener
             			return a.compareTo(b);
             		}
             	});
-            	//
+            	//Subtract the start time from each stamp to normalize it:
             	for(Waypoint item : WaypointItemizedOverlay.mOverlays){
-            		
+            		item.setStamp(item.getStamp()-WaypointItemizedOverlay.runStartTime);
             		Log.i("Waypoint:",item.toString());
             	}
             }
