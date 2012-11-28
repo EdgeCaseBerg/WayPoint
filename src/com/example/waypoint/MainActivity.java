@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
@@ -52,7 +53,7 @@ public class MainActivity extends MapActivity {
         
         //MAKE THE GPS WORK
 		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);        
-		locationListener  = new MyLocationListener();
+		locationListener  = new MyLocationListener(this);
 	    lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);        
 		
         
@@ -87,9 +88,10 @@ public class MainActivity extends MapActivity {
 
 private class MyLocationListener implements LocationListener  
 {
+	Context context;
 	
-	public MyLocationListener(){
-		
+	public MyLocationListener(Context c){
+		context = c;
 	}
 	
     public void onLocationChanged(Location loc) {
@@ -127,6 +129,9 @@ private class MyLocationListener implements LocationListener
             		item.setStamp(item.getStamp()-WaypointItemizedOverlay.runStartTime);
             		Log.i("Waypoint:",item.toString());
             	}
+            	//Go go go
+            	Intent result = new Intent( context ,Results.class);
+            	startActivity(result);
             }
             
             
