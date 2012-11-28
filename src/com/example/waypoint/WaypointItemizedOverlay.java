@@ -14,6 +14,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.ItemizedOverlay;
@@ -35,10 +36,10 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<Waypoint> {
     
     private long startEvent = 0;
     private long endEvent = 1;
-    private final long TAP_TIME = 200;
+    private final long TAP_TIME = 250;
     
     
-	private ArrayList<Waypoint> mOverlays = new ArrayList<Waypoint>();
+	public static ArrayList<Waypoint> mOverlays = new ArrayList<Waypoint>();
 	
 	public WaypointItemizedOverlay(Drawable defaultMarker) {
 		super(boundCenterBottom(defaultMarker));
@@ -53,6 +54,11 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<Waypoint> {
 	
 	public ArrayList<Waypoint> getOverlays(){
 		return mOverlays;
+	}
+	
+	public void setList(ArrayList<Waypoint> overs){
+		mOverlays = overs;
+		populate();
 	}
 	
 	private GeoPoint getPoint(double lat, double lon) {
@@ -148,7 +154,7 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<Waypoint> {
             GeoPoint pt=map.getProjection().fromPixels(x-xDragTouchOffset,
                                                        y-yDragTouchOffset);
             Waypoint toDrop=new Waypoint(pt, dragItem.getTitle(),
-                                               dragItem.getSnippet());
+                                               dragItem.getSnippet(),dragItem.isVisited());
             Log.i("DROP","Dropping waypoint down");
             //Interesting little hack to make the removes work.
             removeItem = toDrop;
@@ -159,6 +165,7 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<Waypoint> {
             endEvent = event.getEventTime();
             Log.i("END TIME DELETE", ""+endEvent);
             if(endEvent - startEvent < TAP_TIME){
+            	Toast.makeText(mContext, "Visited: " + removeItem.isVisited(), Toast.LENGTH_LONG).show();
             	showDeleteDialog();
             }
             

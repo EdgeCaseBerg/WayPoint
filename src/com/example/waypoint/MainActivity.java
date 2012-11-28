@@ -1,5 +1,6 @@
 package com.example.waypoint;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Context;
@@ -17,7 +18,6 @@ import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
-import com.google.android.maps.OverlayItem;
 
 public class MainActivity extends MapActivity {
 	private List<Overlay> mapOverlays;
@@ -26,7 +26,7 @@ public class MainActivity extends MapActivity {
 	//GPS STUFF
     private LocationManager lm;
     private LocationListener locationListener;
-    private long CLOSENESS = 300;
+    private long CLOSENESS = 100;
 	
 
     @Override
@@ -51,7 +51,7 @@ public class MainActivity extends MapActivity {
         
         //MAKE THE GPS WORK
 		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);        
-		locationListener  = new MyLocationListener(itemizedoverlay);
+		locationListener  = new MyLocationListener();
 	    lm.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,locationListener);        
 		
         
@@ -86,28 +86,34 @@ public class MainActivity extends MapActivity {
 
 private class MyLocationListener implements LocationListener  
 {
-	private WaypointItemizedOverlay iOverlay;
 	
-	public MyLocationListener(WaypointItemizedOverlay overlayitems){
-		iOverlay = overlayitems;
+	public MyLocationListener(){
+		
 	}
 	
     public void onLocationChanged(Location loc) {
         if (loc != null) {
-            Toast.makeText(getBaseContext(), 
-                "Location changed : Lat: " + loc.getLatitude() + 
-                " Lng: " + loc.getLongitude(), 
-                Toast.LENGTH_SHORT).show();
             //Make the point
             GeoPoint gp = getPoint(loc.getLatitude(),loc.getLongitude());
             
           //Find out if we're close enough to a marker
-            for(Waypoint item : iOverlay.getOverlays()){
+            
+            for(Waypoint item : WaypointItemizedOverlay.mOverlays){
             	if(comparePoints(gp,item.getPoint())){
             		//We're close enough! 
-            		Log.i("CLOSE", "Close to a point!");
+            		if(!item.isVisited()){
+            			item.markVisited(true);
+            			int index = WaypointItemizedOverlay.mOverlays.indexOf(item);
+            			WaypointItemizedOverlay.mOverlays.set(index, item.markVisited(true));
+            			Toast.makeText(getBaseContext(), "Waypoint Reached", Toast.LENGTH_SHORT).show();
+            			Log.i("CLOSE", "Close to a point!");
+            			break;
+            		}
             	}
+            	Log.i("ITEMMARK",""+item.isVisited());
             }
+            
+            
              
         }
     }
@@ -118,7 +124,7 @@ private class MyLocationListener implements LocationListener
     	//44.479104 -73.197972 is on the other
     	//44.479027 -73.197714 is next to that points
     	//So the euclidian distnace between them is approx 270, so I'll round to 300 being close!
-    	double dist = Math.sqrt(Math.pow(fst.getLatitudeE6()/1000000.0 -snd.getLatitudeE6()/1000000.0,2) + Math.pow(fst.getLongitudeE6()/1000000.0 - snd.getLongitudeE6()/1000000.0,2));
+    	double dist = Math.sqrt(Math.pow(fst.getLatitudeE6() -snd.getLatitudeE6(),2) + Math.pow(fst.getLongitudeE6() - snd.getLongitudeE6(),2));
     	Log.i("DISTANCE",""+dist);
     	return dist < CLOSENESS ? true : false;
     }
