@@ -1,5 +1,7 @@
 package com.example.waypoint;
 
+import java.util.concurrent.TimeUnit;
+
 import android.util.Log;
 
 import com.google.android.maps.GeoPoint;
@@ -43,6 +45,14 @@ public class Waypoint extends OverlayItem{
 		}else{
 			return this.stamp == other.getStamp() ? 0 : 1;
 		}
+	}
+	
+	public String toString(){
+		return "WayPoint " + String.format("%d min, %d sec", 
+			    TimeUnit.MILLISECONDS.toMinutes(stamp),
+			    TimeUnit.MILLISECONDS.toSeconds(stamp) - 
+			    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(stamp))
+			);
 	}
 	
 	

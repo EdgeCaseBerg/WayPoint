@@ -242,4 +242,14 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<Waypoint> {
         dia.show();
 	}
 
+	static public String [] getStringArray(){
+		String[] arr = new String[mOverlays.size()];
+		int i = 0;
+		for(Waypoint item : mOverlays){
+			arr[i] = item.toString();
+			i++;
+		}
+		return arr;
+	}
+	
 }

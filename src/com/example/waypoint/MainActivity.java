@@ -1,6 +1,7 @@
 package com.example.waypoint;
 
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import android.content.Context;
@@ -113,9 +114,19 @@ private class MyLocationListener implements LocationListener
             	Log.i("ITEMMARK",""+item.isVisited());
             }
             //Basically the end of the program I guess
+            Log.i("ALL NODES",""+allNodesVisited());
             if(allNodesVisited()){
-            	//Display the information. Maybe I should make another screen for this.
-            	
+            	//Sort the nodes, subtract the start time from them all.
+            	Collections.sort(WaypointItemizedOverlay.mOverlays, new Comparator<Waypoint>(){
+            		public int compare(Waypoint a, Waypoint b){
+            			return a.compareTo(b);
+            		}
+            	});
+            	//
+            	for(Waypoint item : WaypointItemizedOverlay.mOverlays){
+            		
+            		Log.i("Waypoint:",item.toString());
+            	}
             }
             
             
