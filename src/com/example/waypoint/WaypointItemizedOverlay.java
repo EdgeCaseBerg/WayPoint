@@ -154,7 +154,7 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<Waypoint> {
             GeoPoint pt=map.getProjection().fromPixels(x-xDragTouchOffset,
                                                        y-yDragTouchOffset);
             Waypoint toDrop=new Waypoint(pt, dragItem.getTitle(),
-                                               dragItem.getSnippet(),dragItem.isVisited());
+                                               dragItem.getSnippet(),dragItem.isVisited()).setStamp(dragItem.getStamp());
             Log.i("DROP","Dropping waypoint down");
             //Interesting little hack to make the removes work.
             removeItem = toDrop;
@@ -165,7 +165,7 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<Waypoint> {
             endEvent = event.getEventTime();
             Log.i("END TIME DELETE", ""+endEvent);
             if(endEvent - startEvent < TAP_TIME){
-            	Toast.makeText(mContext, "Visited: " + removeItem.isVisited(), Toast.LENGTH_LONG).show();
+            	//Toast.makeText(mContext, "Visited: " + removeItem.isVisited(), Toast.LENGTH_LONG).show();
             	showDeleteDialog();
             }
             

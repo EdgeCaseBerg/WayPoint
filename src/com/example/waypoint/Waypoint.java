@@ -7,6 +7,7 @@ import com.google.android.maps.OverlayItem;
 
 public class Waypoint extends OverlayItem{
 	private boolean visited = false;
+	private long stamp = -1;
 	
 	public Waypoint(GeoPoint arg0, String arg1, String arg2) {
 		super(arg0, arg1, arg2);
@@ -27,7 +28,22 @@ public class Waypoint extends OverlayItem{
 		return visited;
 	}
 
+	public Waypoint setStamp(long s){
+		this.stamp = s;
+		return this;
+	}
 	
+	public long getStamp(){
+		return stamp;
+	}
+	
+	public int compareTo(Waypoint other){
+		if(this.stamp < other.getStamp()){
+			return -1;
+		}else{
+			return this.stamp == other.getStamp() ? 0 : 1;
+		}
+	}
 	
 	
 }

@@ -104,7 +104,7 @@ private class MyLocationListener implements LocationListener
             		if(!item.isVisited()){
             			item.markVisited(true);
             			int index = WaypointItemizedOverlay.mOverlays.indexOf(item);
-            			WaypointItemizedOverlay.mOverlays.set(index, item.markVisited(true));
+            			WaypointItemizedOverlay.mOverlays.set(index, item.markVisited(true).setStamp(System.currentTimeMillis()));
             			Toast.makeText(getBaseContext(), "Waypoint Reached", Toast.LENGTH_SHORT).show();
             			Log.i("CLOSE", "Close to a point!");
             			break;
@@ -112,10 +112,22 @@ private class MyLocationListener implements LocationListener
             	}
             	Log.i("ITEMMARK",""+item.isVisited());
             }
+            //Basically the end of the program I guess
+            if(allNodesVisited()){
+            	//Display the information. Maybe I should make another screen for this.
+            }
             
             
              
         }
+    }
+    
+    public boolean allNodesVisited(){
+    	boolean all = true;
+    	for(Waypoint item : WaypointItemizedOverlay.mOverlays ){
+    		all = all && item.isVisited();
+    	}
+    	return all;
     }
 
     public boolean comparePoints(GeoPoint fst, GeoPoint snd){
