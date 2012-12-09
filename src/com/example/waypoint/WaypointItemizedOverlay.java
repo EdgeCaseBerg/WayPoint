@@ -276,7 +276,9 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<Waypoint> {
                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                    public void onClick(DialogInterface dialog, int id) {
                 	   if(removeItem!=null){
+                		   mOverlays.remove(removeItem);
                 		   populate();
+                		   
                 		   removeItem= null;
                 	   }
                    }

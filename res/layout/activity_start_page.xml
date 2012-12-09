@@ -151,19 +151,6 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:typeface="serif" />
 
-
-
-
-
-
-
-
-
-
-
-
-
-
         <TextView
             android:id="@+id/textView8"
             android:layout_width="wrap_content"
@@ -172,7 +159,7 @@
             android:gravity="center"
             android:text="Press the Button below to begin!"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textSize="16pt"
+            android:textSize="14pt"
             android:typeface="sans" />
 
     </TableLayout>
