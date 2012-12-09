@@ -1,5 +1,7 @@
 <resources>
 
     <style name="AppTheme" parent="android:Theme.Light" />
+    <color name="fontColor">#000000</color>
+    <color name="backButt">#C0C0C0</color>
 
 </resources>

@@ -10,6 +10,7 @@ import com.google.android.maps.OverlayItem;
 public class Waypoint extends OverlayItem{
 	private boolean visited = false;
 	private long stamp = -1;
+	private long plus = 0;
 	
 	public Waypoint(GeoPoint arg0, String arg1, String arg2) {
 		super(arg0, arg1, arg2);
@@ -35,6 +36,11 @@ public class Waypoint extends OverlayItem{
 		return this;
 	}
 	
+	public Waypoint setPlus(long s){
+		this.plus = s;
+		return this;
+	}
+	
 	public long getStamp(){
 		return stamp;
 	}
@@ -48,11 +54,13 @@ public class Waypoint extends OverlayItem{
 	}
 	
 	public String toString(){
-		return "WayPoint " + String.format("%d min, %d sec", 
+		return "WayPoint Reached:" + String.format("%d min, %d sec", 
 			    TimeUnit.MILLISECONDS.toMinutes(stamp),
 			    TimeUnit.MILLISECONDS.toSeconds(stamp) - 
-			    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(stamp))
-			);
+			    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(stamp)))
+			    + "(+" + String.format("%d m, %d s",TimeUnit.MILLISECONDS.toMinutes(plus),
+					    TimeUnit.MILLISECONDS.toSeconds(plus) - 
+					    TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(plus))) + ")";
 	}
 	
 	

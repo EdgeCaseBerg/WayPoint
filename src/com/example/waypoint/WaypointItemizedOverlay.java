@@ -229,6 +229,8 @@ public class WaypointItemizedOverlay extends ItemizedOverlay<Waypoint> {
             	showCreateDialog(x,y,map);
             }
         }
+        populate();
+        map.invalidate();
         return (result || super.onTouchEvent(event,map));
     }
     

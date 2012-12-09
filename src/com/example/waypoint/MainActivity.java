@@ -84,61 +84,80 @@ public class MainActivity extends MapActivity {
       
       return(super.onKeyDown(keyCode, event));
     }
+    
+    @Override
+    protected void onActivityResult(int requestCode,int resultCode, Intent data){
+    	if(requestCode == 1){
+    		if(resultCode == RESULT_OK){
+    			//Clear the overlay!
+    			WaypointItemizedOverlay.mOverlays.clear();
+    		}
+    	}
+    }
 
 
 private class MyLocationListener implements LocationListener  
 {
 	Context context;
 	
+	public void onLocationChanged(Location loc) {
+	    if (loc != null) {
+	        //Make the point
+	        GeoPoint gp = getPoint(loc.getLatitude(),loc.getLongitude());
+	      //Find out if we're close enough to a marker
+	        
+	        for(Waypoint item : WaypointItemizedOverlay.mOverlays){
+	        	if(comparePoints(gp,item.getPoint())){
+	        		//We're close enough! 
+	        		if(!item.isVisited()){
+	        			item.markVisited(true);
+	        			int index = WaypointItemizedOverlay.mOverlays.indexOf(item);
+	        			WaypointItemizedOverlay.mOverlays.set(index, item.markVisited(true).setStamp(System.currentTimeMillis()));
+	        			Toast.makeText(getBaseContext(), "Waypoint Reached", Toast.LENGTH_SHORT).show();
+	        			Log.i("CLOSE", "Close to a point!");
+	        			break;
+	        		}
+	        	}
+	        	Log.i("ITEMMARK",""+item.isVisited());
+	        }
+	        //Basically the end of the program I guess
+	        Log.i("ALL NODES",""+allNodesVisited());
+	        if(allNodesVisited()){
+	        	//Sort the nodes, subtract the start time from them all.
+	        	Collections.sort(WaypointItemizedOverlay.mOverlays, new Comparator<Waypoint>(){
+	        		public int compare(Waypoint a, Waypoint b){
+	        			return a.compareTo(b);
+	        		}
+	        	});
+	        	//Subtract the start time from each stamp to normalize it:
+	        	Waypoint prev=null;
+	        	for(Waypoint item : WaypointItemizedOverlay.mOverlays){
+	        		if(prev==null){
+	        			item.setStamp(item.getStamp()-WaypointItemizedOverlay.runStartTime);
+	        			item.setPlus(item.getStamp());
+	        		}else{
+	        			item.setStamp(item.getStamp()-WaypointItemizedOverlay.runStartTime);
+	        			item.setPlus(item.getStamp()-prev.getStamp());
+	        		}
+	        		Log.i("Waypoint:",item.toString());
+	        		prev = item;
+	        	}
+	        	//Go go go
+	        	Intent result = new Intent( context ,Results.class);
+	        	startActivityForResult(result,1);
+	        }
+	        
+	        
+	         
+	    }
+	}
+
+	
+	
 	public MyLocationListener(Context c){
 		context = c;
 	}
 	
-    public void onLocationChanged(Location loc) {
-        if (loc != null) {
-            //Make the point
-            GeoPoint gp = getPoint(loc.getLatitude(),loc.getLongitude());
-            
-          //Find out if we're close enough to a marker
-            
-            for(Waypoint item : WaypointItemizedOverlay.mOverlays){
-            	if(comparePoints(gp,item.getPoint())){
-            		//We're close enough! 
-            		if(!item.isVisited()){
-            			item.markVisited(true);
-            			int index = WaypointItemizedOverlay.mOverlays.indexOf(item);
-            			WaypointItemizedOverlay.mOverlays.set(index, item.markVisited(true).setStamp(System.currentTimeMillis()));
-            			Toast.makeText(getBaseContext(), "Waypoint Reached", Toast.LENGTH_SHORT).show();
-            			Log.i("CLOSE", "Close to a point!");
-            			break;
-            		}
-            	}
-            	Log.i("ITEMMARK",""+item.isVisited());
-            }
-            //Basically the end of the program I guess
-            Log.i("ALL NODES",""+allNodesVisited());
-            if(allNodesVisited()){
-            	//Sort the nodes, subtract the start time from them all.
-            	Collections.sort(WaypointItemizedOverlay.mOverlays, new Comparator<Waypoint>(){
-            		public int compare(Waypoint a, Waypoint b){
-            			return a.compareTo(b);
-            		}
-            	});
-            	//Subtract the start time from each stamp to normalize it:
-            	for(Waypoint item : WaypointItemizedOverlay.mOverlays){
-            		item.setStamp(item.getStamp()-WaypointItemizedOverlay.runStartTime);
-            		Log.i("Waypoint:",item.toString());
-            	}
-            	//Go go go
-            	Intent result = new Intent( context ,Results.class);
-            	startActivity(result);
-            }
-            
-            
-             
-        }
-    }
-    
     public boolean allNodesVisited(){
     	boolean all = true;
     	for(Waypoint item : WaypointItemizedOverlay.mOverlays ){
